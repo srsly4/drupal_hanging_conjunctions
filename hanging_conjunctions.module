@@ -1,0 +1,32 @@
+<?php
+/**
+* @file
+* Module for eliminating "hanging conjunction" in polish language
+*/
+
+
+/**
+ * Implements hook_entity_view().
+ * @param array $build
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ * @internal param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
+ * @internal param $view_mode
+ */
+function hanging_conjunctions_entity_view(array &$build, \Drupal\Core\Entity\EntityInterface $entity) {
+  $type = $entity->getEntityType()->id();
+
+  if ($type == 'node')
+  {
+    if (isset($build['body'][0]['#text'])){
+      _hanging_conjunctions_process_plain_text($build['body'][0]['#text']);
+    }
+  }
+}
+
+
+function _hanging_conjunctions_process_plain_text(&$input){
+  $conjunctions = array('w','z','o','i','a');
+  foreach ($conjunctions as $c){
+    $input = str_replace(' ' . $c . ' ', ' ' . $c . '&nbsp;', $input);
+  }
+}
